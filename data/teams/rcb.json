@@ -1,0 +1,90 @@
+{
+  "id": "royalchallengersbengaluru",
+  "name": "Royal Challengers Bengaluru",
+  "players": [
+    {
+      "id": "royalchallengersbengaluru1",
+      "name": "Virat Kohli"
+    },
+    {
+      "id": "royalchallengersbengaluru2",
+      "name": "Phil Salt"
+    },
+    {
+      "id": "royalchallengersbengaluru3",
+      "name": "Devdutt Padikkal"
+    },
+    {
+      "id": "royalchallengersbengaluru4",
+      "name": "Rajat Patidar"
+    },
+    {
+      "id": "royalchallengersbengaluru5",
+      "name": "Tim David"
+    },
+    {
+      "id": "royalchallengersbengaluru6",
+      "name": "Krunal Pandya"
+    },
+    {
+      "id": "royalchallengersbengaluru7",
+      "name": "Romario Shepherd"
+    },
+    {
+      "id": "royalchallengersbengaluru8",
+      "name": "Jitesh Sharma"
+    },
+    {
+      "id": "royalchallengersbengaluru9",
+      "name": "Bhuvneshwar Kumar"
+    },
+    {
+      "id": "royalchallengersbengaluru10",
+      "name": "Yash Dayal"
+    },
+    {
+      "id": "royalchallengersbengaluru11",
+      "name": "Josh Hazlewood"
+    },
+    {
+      "id": "royalchallengersbengaluru12",
+      "name": "Suyash Sharma"
+    },
+    {
+      "id": "royalchallengersbengaluru13",
+      "name": "Abhinandan Singh"
+    },
+    {
+      "id": "royalchallengersbengaluru14",
+      "name": "Jacob Bethell"
+    },
+    {
+      "id": "royalchallengersbengaluru15",
+      "name": "Nuwan Thushara"
+    },
+    {
+      "id": "royalchallengersbengaluru16",
+      "name": "Rasikh Dar"
+    },
+    {
+      "id": "royalchallengersbengaluru17",
+      "name": "Swapnil Singh"
+    },
+    {
+      "id": "royalchallengersbengaluru18",
+      "name": "Venkatesh Iyer"
+    },
+    {
+      "id": "royalchallengersbengaluru19",
+      "name": "Jacob Duffy"
+    },
+    {
+      "id": "royalchallengersbengaluru20",
+      "name": "Jordan Cox"
+    },
+    {
+      "id": "royalchallengersbengaluru21",
+      "name": "Mangesh Yadav"
+    }
+  ]
+}
