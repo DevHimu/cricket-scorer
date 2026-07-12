@@ -1,26 +1,42 @@
 [
   {
-    "id": "india",
-    "name": "India"
+    "id": "chennaisuperkings",
+    "name": "Chennai Super Kings"
   },
   {
-    "id": "australia",
-    "name": "Australia"
+    "id": "mumbaiindians",
+    "name": "Mumbai Indians"
   },
   {
-    "id": "england",
-    "name": "England"
+    "id": "royalchallengersbengaluru",
+    "name": "Royal Challengers Bengaluru"
   },
   {
-    "id": "pakistan",
-    "name": "Pakistan"
+    "id": "kolkataknightriders",
+    "name": "Kolkata Knight Riders"
   },
   {
-    "id": "southafrica",
-    "name": "South Africa"
+    "id": "sunrisershyderabad",
+    "name": "Sunrisers Hyderabad"
   },
   {
-    "id": "newzealand",
-    "name": "New Zealand"
+    "id": "delhicapitals",
+    "name": "Delhi Capitals"
+  },
+  {
+    "id": "rajasthanroyals",
+    "name": "Rajasthan Royals"
+  },
+  {
+    "id": "punjabkings",
+    "name": "Punjab Kings"
+  },
+  {
+    "id": "lucknowsupergiants",
+    "name": "Lucknow Super Giants"
+  },
+  {
+    "id": "gujarattitans",
+    "name": "Gujarat Titans"
   }
 ]
