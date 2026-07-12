@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Cricket Scorer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=Roboto+Mono:wght@500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">
+    <div class="seam"></div>
+    <b>Cricket Scorer</b>
+    <span id="brandTag">live</span>
+    <button class="api-btn" id="apiBtn" title="Show all API endpoints">&lt;/&gt; APIs</button>
+  </div>
+
+  <!-- 1. LOGIN -->
+  <section id="screen-login" class="screen active">
+    <div class="panel">
+      <p class="eyebrow">Scorer access</p>
+      <p class="lead">Sign in to score</p>
+      <label class="fld"><span>Username</span><input id="loginUser" autocomplete="username" placeholder="admin" /></label>
+      <label class="fld"><span>Password</span><input id="loginPass" type="password" autocomplete="current-password" placeholder="cricket123" /></label>
+      <button class="btn" id="loginBtn">Sign in</button>
+      <div class="error" id="loginErr"></div>
+      <p class="note">Default login is <b>admin / cricket123</b> (set SCORER_USER / SCORER_PASS to change).</p>
+    </div>
+  </section>
+
+  <!-- 2. SETUP -->
+  <section id="screen-setup" class="screen">
+    <div class="panel">
+      <p class="eyebrow">New match</p>
+      <p class="lead">Teams &amp; overs</p>
+      <label class="fld"><span>Team A</span><select id="teamA"></select></label>
+      <label class="fld"><span>Team B</span><select id="teamB"></select></label>
+      <label class="fld"><span>Overs per innings</span><input id="overs" type="number" min="1" max="50" value="6" /></label>
+      <label class="fld"><span>Venue <em style="opacity:.6;font-style:normal">(optional)</em></span><input id="venue" type="text" placeholder="e.g. Eden Gardens, Kolkata" /></label>
+      <button class="btn" id="toXiBtn">Pick playing XI</button>
+      <div class="error" id="setupErr"></div>
+    </div>
+  </section>
+
+  <!-- 3. PLAYING XI -->
+  <section id="screen-xi" class="screen">
+    <div class="panel">
+      <div class="vs-head">
+        <div><p class="eyebrow">Playing eleven</p><b id="xiTeamName">Team</b></div>
+        <div class="count-pill" id="xiCount"><b>0</b> / 11</div>
+      </div>
+      <p class="note" id="xiHint">Tap 11 players. Toggle to add or remove.</p>
+      <div class="players" id="xiPlayers"></div>
+      <button class="btn" id="xiNextBtn" disabled>Confirm XI</button>
+      <div class="error" id="xiErr"></div>
+    </div>
+  </section>
+
+  <!-- 4. OVERVIEW -->
+  <section id="screen-overview" class="screen">
+    <div class="panel">
+      <p class="eyebrow">Ready to play</p>
+      <div class="vs-head"><b id="ovA">Team A</b><span class="vs-tag">vs</span><b id="ovB">Team B</b></div>
+      <p class="note" id="ovMeta"></p>
+      <div class="row" style="margin-top:14px">
+        <div><p class="eyebrow" id="ovAh">Team A XI</p><ul class="xi-list" id="ovAlist"></ul></div>
+        <div><p class="eyebrow" id="ovBh">Team B XI</p><ul class="xi-list" id="ovBlist"></ul></div>
+      </div>
+      <button class="btn" id="startGameBtn" style="margin-top:18px">Start game</button>
+      <button class="btn ghost" id="backToXiBtn" style="margin-top:8px">Back</button>
+      <div class="error" id="ovErr"></div>
+    </div>
+  </section>
+
+  <!-- 5. TOSS -->
+  <section id="screen-toss" class="screen">
+    <div class="panel">
+      <p class="eyebrow">The toss</p>
+      <p class="lead">Who won the toss?</p>
+      <label class="fld"><span>Toss winner</span><select id="tossWinner"></select></label>
+      <label class="fld"><span>Elected to</span>
+        <select id="tossDecision"><option value="bat">Bat first</option><option value="bowl">Bowl first</option></select>
+      </label>
+      <button class="btn gold" id="tossBtn">Confirm toss</button>
+      <div class="error" id="tossErr"></div>
+    </div>
+  </section>
+
+  <!-- 6. OPENERS + BOWLER -->
+  <section id="screen-openers" class="screen">
+    <div class="panel">
+      <p class="eyebrow" id="openEyebrow">1st innings</p>
+      <p class="lead" id="openTitle">Openers &amp; bowler</p>
+      <label class="fld"><span id="lblStriker">Striker (on strike)</span><select id="selStriker"></select></label>
+      <label class="fld"><span>Non-striker</span><select id="selNonStriker"></select></label>
+      <label class="fld"><span id="lblBowler">Opening bowler</span><select id="selBowler"></select></label>
+      <button class="btn" id="startInningsBtn">Start innings</button>
+      <div class="error" id="openErr"></div>
+    </div>
+  </section>
+
+  <!-- 7. SCORER -->
+  <section id="screen-scorer" class="screen">
+    <div class="scoreboard">
+      <div class="sb-top">
+        <div><div class="sb-team" id="sbTeam">Team</div><div class="sb-inn" id="sbInn">1st innings</div></div>
+        <div class="sb-inn mono" id="sbCode"></div>
+      </div>
+      <div class="sb-score"><span id="sbRuns">0</span><small>/<span id="sbWkts">0</span></small></div>
+      <div class="sb-meta">
+        <span>Overs <b class="mono" id="sbOvers">0.0</b> / <span id="sbTotalOv">0</span></span>
+        <span>CRR <b class="mono" id="sbCRR">0.00</b></span>
+        <span id="sbBowlerWrap">Bowler <b id="sbBowler">—</b></span>
+      </div>
+      <div class="sb-target" id="sbTarget" style="display:none"></div>
+    </div>
+
+    <div class="over-tape" id="overTape"><span class="lbl">This over</span></div>
+
+    <div class="crease">
+      <div class="mini batter" id="miniStriker">
+        <div class="cap">Striker <span class="strike-dot">●</span></div>
+        <div class="who"><span class="nm" id="stkName">—</span><span class="fig mono" id="stkFig">0 (0)</span></div>
+      </div>
+      <div class="mini batter" id="miniNon">
+        <div class="cap">Non-striker</div>
+        <div class="who"><span class="nm" id="nonName">—</span><span class="fig mono" id="nonFig">0 (0)</span></div>
+      </div>
+    </div>
+
+    <div class="pad">
+      <h3>Extras — tap one, then a run button</h3>
+      <div class="extras-row" id="extrasRow">
+        <div class="chip" data-x="wide">Wide</div>
+        <div class="chip" data-x="noball">No ball</div>
+        <div class="chip" data-x="bye">Bye</div>
+        <div class="chip" data-x="legbye">Leg bye</div>
+      </div>
+      <h3>Runs</h3>
+      <div class="runs-grid">
+        <button class="runbtn" data-r="0">0</button>
+        <button class="runbtn" data-r="1">1</button>
+        <button class="runbtn" data-r="2">2</button>
+        <button class="runbtn" data-r="3">3</button>
+        <button class="runbtn four" data-r="4">4</button>
+        <button class="runbtn" data-r="5">5</button>
+        <button class="runbtn six" data-r="6">6</button>
+        <button class="undobtn" id="undoBtn">Undo</button>
+      </div>
+      <div class="action-row">
+        <button class="wktbtn" id="wktBtn">Wicket</button>
+        <button class="undobtn" id="wktUndo" style="display:none">Cancel</button>
+      </div>
+      <div class="error" id="scoreErr"></div>
+    </div>
+
+    <div class="helper-link"><a id="apiLink" target="_blank">Open public live scoreboard →</a></div>
+  </section>
+</div>
+
+<!-- MODALS -->
+<div class="modal-bg" id="modalApis">
+  <div class="modal api-modal">
+    <button class="api-close" id="apiClose" title="Close">&times;</button>
+    <h2>API endpoints</h2>
+    <p class="sub" id="apiSub">Reads are public (CORS enabled); scoring actions need the bearer token from <code>/api/login</code>.</p>
+    <div class="api-base" id="apiBase"></div>
+    <div class="api-list" id="apiList"></div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modalBatter">
+  <div class="modal">
+    <h2>Next batter</h2>
+    <p class="sub" id="batterSub">Select who comes in.</p>
+    <div class="pick-list" id="batterPicks"></div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modalBowler">
+  <div class="modal">
+    <h2>Over complete</h2>
+    <p class="sub">Choose the next bowler.</p>
+    <div class="pick-list" id="bowlerPicks"></div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modalWicket">
+  <div class="modal">
+    <h2>How out?</h2>
+    <p class="sub">Pick the dismissal, then choose the batter.</p>
+    <div class="extras-row" id="wicketTypes" style="grid-template-columns:repeat(3,1fr)">
+      <div class="chip on" data-w="bowled">Bowled</div>
+      <div class="chip" data-w="caught">Caught</div>
+      <div class="chip" data-w="lbw">LBW</div>
+      <div class="chip" data-w="run out">Run out</div>
+      <div class="chip" data-w="stumped">Stumped</div>
+      <div class="chip" data-w="hit wicket">Hit wkt</div>
+    </div>
+    <div class="row" style="margin-top:14px">
+      <button class="btn red" id="confirmWkt">Confirm wicket</button>
+      <button class="btn ghost" id="cancelWkt">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modalInnings">
+  <div class="modal" style="text-align:center">
+    <div class="result-hero">
+      <div class="trophy">🏏</div>
+      <h2 id="brkTitle">Innings complete</h2>
+      <p class="sub" id="brkLine"></p>
+    </div>
+    <button class="btn gold" id="toSecondBtn">Continue to next innings</button>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

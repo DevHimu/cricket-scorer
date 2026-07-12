@@ -1,0 +1,26 @@
+[
+  {
+    "id": "india",
+    "name": "India"
+  },
+  {
+    "id": "australia",
+    "name": "Australia"
+  },
+  {
+    "id": "england",
+    "name": "England"
+  },
+  {
+    "id": "pakistan",
+    "name": "Pakistan"
+  },
+  {
+    "id": "southafrica",
+    "name": "South Africa"
+  },
+  {
+    "id": "newzealand",
+    "name": "New Zealand"
+  }
+]

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Live Score</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=Roboto+Mono:wght@500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+<style>
+  .live-shell { max-width: 560px; margin: 40px auto; padding: 0 18px; }
+  .pips { display:flex; gap:6px; flex-wrap:wrap; margin-top:14px; }
+  .status-chip { display:inline-block; font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--boundary); }
+  .idbox { display:flex; gap:8px; margin-bottom:16px; }
+  .idbox input { flex:1; }
+</style>
+</head>
+<body>
+<div class="live-shell">
+  <div class="brand"><div class="seam"></div><b>Live Score</b><span>public feed</span></div>
+
+  <div class="idbox" id="idbox" style="display:none">
+    <input id="mid" placeholder="Enter match id" />
+    <button class="btn sm" id="go">Watch</button>
+  </div>
+
+  <div class="scoreboard">
+    <div class="sb-top">
+      <div><div class="sb-team" id="team">—</div><div class="sb-inn" id="inn"></div></div>
+      <div class="status-chip" id="status"></div>
+    </div>
+    <div class="sb-score"><span id="runs">0</span><small>/<span id="wkts">0</span></small></div>
+    <div class="sb-meta">
+      <span>Overs <b class="mono" id="ov">0.0</b></span>
+      <span>CRR <b class="mono" id="crr">0.00</b></span>
+    </div>
+    <div class="sb-target" id="target" style="display:none"></div>
+  </div>
+
+  <div class="mini" style="margin-bottom:12px">
+    <div class="cap">At the crease</div>
+    <div class="who"><span class="nm" id="stk">—</span><span class="fig mono" id="stkf"></span></div>
+    <div class="who" style="margin-top:6px"><span class="nm" id="non">—</span><span class="fig mono" id="nonf"></span></div>
+  </div>
+  <div class="mini">
+    <div class="cap">Bowler</div>
+    <div class="who"><span class="nm" id="bwl">—</span><span class="fig mono" id="bwlf"></span></div>
+    <div class="pips" id="pips"></div>
+  </div>
+
+  <p class="note" style="color:#cbd5cd;text-align:center;margin-top:18px" id="result"></p>
+</div>
+
+<script>
+const q = new URLSearchParams(location.search);
+let matchId = q.get('id');
+
+function pipClass(lbl) {
+  if (lbl === 'W') return 'pip wkt';
+  if (lbl === '4') return 'pip four';
+  if (lbl === '6') return 'pip six';
+  if (/wd|nb|b$/.test(lbl)) return 'pip extra';
+  if (lbl === '0') return 'pip dot';
+  return 'pip';
+}
+function render(s) {
+  document.getElementById('team').textContent = s.batting || s.teams?.A + ' v ' + s.teams?.B || '—';
+  document.getElementById('inn').textContent = s.innings ? (s.innings === 1 ? '1st innings' : '2nd innings') : '';
+  document.getElementById('status').textContent = (s.status || '').replace('_', ' ');
+  document.getElementById('runs').textContent = s.runs ?? 0;
+  document.getElementById('wkts').textContent = s.wickets ?? 0;
+  document.getElementById('ov').textContent = s.oversBowled || '0.0';
+  document.getElementById('crr').textContent = (s.runRate ?? 0).toFixed ? s.runRate.toFixed(2) : s.runRate || '0.00';
+  const t = document.getElementById('target');
+  if (s.required) { t.style.display = 'block'; t.innerHTML = `Need <b>${s.required.runs}</b> off <b>${s.required.balls}</b> balls (target ${s.target})`; }
+  else t.style.display = 'none';
+  if (s.striker) { document.getElementById('stk').textContent = s.striker.name + ' *'; document.getElementById('stkf').textContent = s.striker.runs + ' (' + s.striker.balls + ')'; }
+  if (s.nonStriker) { document.getElementById('non').textContent = s.nonStriker.name; document.getElementById('nonf').textContent = s.nonStriker.runs + ' (' + s.nonStriker.balls + ')'; }
+  if (s.bowler) { document.getElementById('bwl').textContent = s.bowler.name; document.getElementById('bwlf').textContent = s.bowler.overs + '-' + s.bowler.runs + '-' + s.bowler.wickets; }
+  const pips = document.getElementById('pips'); pips.innerHTML = '';
+  (s.lastBalls || []).forEach((l) => { const d = document.createElement('div'); d.className = pipClass(l); d.textContent = l; pips.appendChild(d); });
+  document.getElementById('result').textContent = s.result ? '🏆 ' + s.result.text : '';
+}
+
+function connect(id) {
+  // Realtime via Server-Sent Events. Falls back to polling if SSE drops.
+  const es = new EventSource('/api/matches/' + id + '/stream');
+  es.onmessage = (e) => { try { render(JSON.parse(e.data)); } catch (_) {} };
+  es.onerror = () => { es.close(); setTimeout(() => poll(id), 2000); };
+}
+async function poll(id) {
+  try { const r = await fetch('/api/matches/' + id + '/score'); render(await r.json()); } catch (_) {}
+  setTimeout(() => poll(id), 3000);
+}
+
+if (matchId) connect(matchId);
+else {
+  document.getElementById('idbox').style.display = 'flex';
+  document.getElementById('go').onclick = () => { const v = document.getElementById('mid').value.trim(); if (v) { location.search = '?id=' + v; } };
+}
+</script>
+</body>
+</html>
