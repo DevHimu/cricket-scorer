@@ -1,0 +1,106 @@
+{
+  "id": "chennaisuperkings",
+  "name": "Chennai Super Kings",
+  "players": [
+    {
+      "id": "chennaisuperkings1",
+      "name": "Ruturaj Gaikwad"
+    },
+    {
+      "id": "chennaisuperkings2",
+      "name": "Sanju Samson"
+    },
+    {
+      "id": "chennaisuperkings3",
+      "name": "MS Dhoni"
+    },
+    {
+      "id": "chennaisuperkings4",
+      "name": "Shivam Dube"
+    },
+    {
+      "id": "chennaisuperkings5",
+      "name": "Noor Ahmad"
+    },
+    {
+      "id": "chennaisuperkings6",
+      "name": "Rahul Chahar"
+    },
+    {
+      "id": "chennaisuperkings7",
+      "name": "Khaleel Ahmed"
+    },
+    {
+      "id": "chennaisuperkings8",
+      "name": "Prashant Veer"
+    },
+    {
+      "id": "chennaisuperkings9",
+      "name": "Kartik Sharma"
+    },
+    {
+      "id": "chennaisuperkings10",
+      "name": "Anshul Kamboj"
+    },
+    {
+      "id": "chennaisuperkings11",
+      "name": "Dewald Brevis"
+    },
+    {
+      "id": "chennaisuperkings12",
+      "name": "Gurjapneet Singh"
+    },
+    {
+      "id": "chennaisuperkings13",
+      "name": "Nathan Ellis"
+    },
+    {
+      "id": "chennaisuperkings14",
+      "name": "Matt Henry"
+    },
+    {
+      "id": "chennaisuperkings15",
+      "name": "Akeal Hosein"
+    },
+    {
+      "id": "chennaisuperkings16",
+      "name": "Jamie Overton"
+    },
+    {
+      "id": "chennaisuperkings17",
+      "name": "Matthew Short"
+    },
+    {
+      "id": "chennaisuperkings18",
+      "name": "Zakary Foulkes"
+    },
+    {
+      "id": "chennaisuperkings19",
+      "name": "Sarfaraz Khan"
+    },
+    {
+      "id": "chennaisuperkings20",
+      "name": "Aman Khan"
+    },
+    {
+      "id": "chennaisuperkings21",
+      "name": "Urvil Patel"
+    },
+    {
+      "id": "chennaisuperkings22",
+      "name": "Mukesh Choudhary"
+    },
+    {
+      "id": "chennaisuperkings23",
+      "name": "Ayush Mhatre"
+    },
+    {
+      "id": "chennaisuperkings24",
+      "name": "Ramakrishna Ghosh"
+    },
+    {
+      "id": "chennaisuperkings25",
+      "name": "Shreyas Gopal"
+    }
+  ]
+}

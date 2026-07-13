@@ -1,0 +1,98 @@
+{
+  "id": "kolkataknightriders",
+  "name": "Kolkata Knight Riders",
+  "players": [
+    {
+      "id": "kolkataknightriders1",
+      "name": "Ajinkya Rahane"
+    },
+    {
+      "id": "kolkataknightriders2",
+      "name": "Rinku Singh"
+    },
+    {
+      "id": "kolkataknightriders3",
+      "name": "Angkrish Raghuvanshi"
+    },
+    {
+      "id": "kolkataknightriders4",
+      "name": "Manish Pandey"
+    },
+    {
+      "id": "kolkataknightriders5",
+      "name": "Sunil Narine"
+    },
+    {
+      "id": "kolkataknightriders6",
+      "name": "Cameron Green"
+    },
+    {
+      "id": "kolkataknightriders7",
+      "name": "Ramandeep Singh"
+    },
+    {
+      "id": "kolkataknightriders8",
+      "name": "Rovman Powell"
+    },
+    {
+      "id": "kolkataknightriders9",
+      "name": "Finn Allen"
+    },
+    {
+      "id": "kolkataknightriders10",
+      "name": "Tim Seifert"
+    },
+    {
+      "id": "kolkataknightriders11",
+      "name": "Rachin Ravindra"
+    },
+    {
+      "id": "kolkataknightriders12",
+      "name": "Varun Chakaravarthy"
+    },
+    {
+      "id": "kolkataknightriders13",
+      "name": "Vaibhav Arora"
+    },
+    {
+      "id": "kolkataknightriders14",
+      "name": "Akash Deep"
+    },
+    {
+      "id": "kolkataknightriders15",
+      "name": "Navdeep Saini"
+    },
+    {
+      "id": "kolkataknightriders16",
+      "name": "Umran Malik"
+    },
+    {
+      "id": "kolkataknightriders17",
+      "name": "Rahul Tripathi"
+    },
+    {
+      "id": "kolkataknightriders18",
+      "name": "Anukul Roy"
+    },
+    {
+      "id": "kolkataknightriders19",
+      "name": "Prashant Solanki"
+    },
+    {
+      "id": "kolkataknightriders20",
+      "name": "Kartik Tyagi"
+    },
+    {
+      "id": "kolkataknightriders21",
+      "name": "Daksh Kamra"
+    },
+    {
+      "id": "kolkataknightriders22",
+      "name": "Sarthak Ranjan"
+    },
+    {
+      "id": "kolkataknightriders23",
+      "name": "Luvnith Sisodia"
+    }
+  ]
+}

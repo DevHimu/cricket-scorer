@@ -1,0 +1,66 @@
+{
+  "id": "india",
+  "name": "India",
+  "players": [
+    {
+      "id": "india1",
+      "name": "R. Sharma"
+    },
+    {
+      "id": "india2",
+      "name": "S. Gill"
+    },
+    {
+      "id": "india3",
+      "name": "V. Kohli"
+    },
+    {
+      "id": "india4",
+      "name": "S. Iyer"
+    },
+    {
+      "id": "india5",
+      "name": "K. Rahul"
+    },
+    {
+      "id": "india6",
+      "name": "H. Pandya"
+    },
+    {
+      "id": "india7",
+      "name": "R. Jadeja"
+    },
+    {
+      "id": "india8",
+      "name": "R. Ashwin"
+    },
+    {
+      "id": "india9",
+      "name": "J. Bumrah"
+    },
+    {
+      "id": "india10",
+      "name": "M. Shami"
+    },
+    {
+      "id": "india11",
+      "name": "K. Yadav"
+    },
+    {
+      "id": "india12",
+      "name": "S. Samson"
+    },
+    {
+      "id": "india13",
+      "name": "A. Patel"
+    },
+    {
+      "id": "india14",
+      "name": "Y. Chahal"
+    },
+    {
+      "id": "india15",
+      "name": "S. Dube"
+    }
+  ]
+}

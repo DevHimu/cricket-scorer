@@ -1,0 +1,14 @@
+{
+  "name": "cricket-scorer",
+  "version": "1.0.0",
+  "description": "A very simple cricket scorer with a realtime REST API",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test-engine.js"
+  },
+  "engines": { "node": ">=18" },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

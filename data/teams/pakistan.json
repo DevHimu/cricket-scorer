@@ -1,0 +1,66 @@
+{
+  "id": "pakistan",
+  "name": "Pakistan",
+  "players": [
+    {
+      "id": "pakistan1",
+      "name": "Fakhar Z."
+    },
+    {
+      "id": "pakistan2",
+      "name": "Imam ul-Haq"
+    },
+    {
+      "id": "pakistan3",
+      "name": "Babar A."
+    },
+    {
+      "id": "pakistan4",
+      "name": "Mohammad R."
+    },
+    {
+      "id": "pakistan5",
+      "name": "Iftikhar A."
+    },
+    {
+      "id": "pakistan6",
+      "name": "Shadab K."
+    },
+    {
+      "id": "pakistan7",
+      "name": "Mohammad N."
+    },
+    {
+      "id": "pakistan8",
+      "name": "Shaheen A."
+    },
+    {
+      "id": "pakistan9",
+      "name": "Haris R."
+    },
+    {
+      "id": "pakistan10",
+      "name": "Naseem S."
+    },
+    {
+      "id": "pakistan11",
+      "name": "Usama M."
+    },
+    {
+      "id": "pakistan12",
+      "name": "Agha Salman"
+    },
+    {
+      "id": "pakistan13",
+      "name": "Abdullah S."
+    },
+    {
+      "id": "pakistan14",
+      "name": "Faheem A."
+    },
+    {
+      "id": "pakistan15",
+      "name": "Zaman K."
+    }
+  ]
+}

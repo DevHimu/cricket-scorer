@@ -1,0 +1,106 @@
+{
+  "id": "punjabkings",
+  "name": "Punjab Kings",
+  "players": [
+    {
+      "id": "punjabkings1",
+      "name": "Shreyas Iyer"
+    },
+    {
+      "id": "punjabkings2",
+      "name": "Arshdeep Singh"
+    },
+    {
+      "id": "punjabkings3",
+      "name": "Yuzvendra Chahal"
+    },
+    {
+      "id": "punjabkings4",
+      "name": "Marcus Stoinis"
+    },
+    {
+      "id": "punjabkings5",
+      "name": "Marco Jansen"
+    },
+    {
+      "id": "punjabkings6",
+      "name": "Shashank Singh"
+    },
+    {
+      "id": "punjabkings7",
+      "name": "Prabhsimran Singh"
+    },
+    {
+      "id": "punjabkings8",
+      "name": "Priyansh Arya"
+    },
+    {
+      "id": "punjabkings9",
+      "name": "Nehal Wadhera"
+    },
+    {
+      "id": "punjabkings10",
+      "name": "Ben Dwarshuis"
+    },
+    {
+      "id": "punjabkings11",
+      "name": "Mitchell Owen"
+    },
+    {
+      "id": "punjabkings12",
+      "name": "Cooper Connolly"
+    },
+    {
+      "id": "punjabkings13",
+      "name": "Azmatullah Omarzai"
+    },
+    {
+      "id": "punjabkings14",
+      "name": "Lockie Ferguson"
+    },
+    {
+      "id": "punjabkings15",
+      "name": "Vyshak Vijaykumar"
+    },
+    {
+      "id": "punjabkings16",
+      "name": "Yash Thakur"
+    },
+    {
+      "id": "punjabkings17",
+      "name": "Harpreet Brar"
+    },
+    {
+      "id": "punjabkings18",
+      "name": "Vishnu Vinod"
+    },
+    {
+      "id": "punjabkings19",
+      "name": "Xavier Bartlett"
+    },
+    {
+      "id": "punjabkings20",
+      "name": "Harnoor Singh"
+    },
+    {
+      "id": "punjabkings21",
+      "name": "Suryansh Shedge"
+    },
+    {
+      "id": "punjabkings22",
+      "name": "Vishal Nishad"
+    },
+    {
+      "id": "punjabkings23",
+      "name": "Musheer Khan"
+    },
+    {
+      "id": "punjabkings24",
+      "name": "Pyla Avinash"
+    },
+    {
+      "id": "punjabkings25",
+      "name": "Praveen Dubey"
+    }
+  ]
+}

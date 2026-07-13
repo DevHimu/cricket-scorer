@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cricket — Live & Results</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=Roboto+Mono:wght@500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+<style>
+  .live-shell { max-width: 620px; margin: 34px auto; padding: 0 18px; }
+  .pips { display:flex; gap:6px; flex-wrap:wrap; margin-top:14px; }
+  .status-chip { display:inline-block; font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--boundary); }
+  .topbar { display:flex; align-items:center; gap:12px; margin-bottom:18px; }
+  .topbar .back { margin-left:auto; }
+  .feed-h { font-family:'Oswald'; text-transform:uppercase; letter-spacing:.1em; font-size:13px; color:var(--muted); margin:22px 0 10px; display:flex; align-items:center; gap:8px; }
+  .feed-h .dot { width:8px; height:8px; border-radius:50%; background:var(--ball); box-shadow:0 0 0 rgba(193,39,45,.5); animation:pulse 1.6s infinite; }
+  @keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(193,39,45,.5)} 70%{box-shadow:0 0 0 8px rgba(193,39,45,0)} 100%{box-shadow:0 0 0 0 rgba(193,39,45,0)} }
+  .mcard { display:block; text-decoration:none; color:inherit; background:var(--card); border:1px solid var(--line); border-radius:14px; padding:14px 16px; margin-bottom:10px; transition:border-color .15s, transform .1s; }
+  .mcard:hover { border-color:var(--boundary); transform:translateY(-1px); }
+  .mcard .row1 { display:flex; align-items:center; gap:10px; }
+  .mcard .teams { font-family:'Oswald'; font-size:18px; font-weight:500; }
+  .mcard .chip { margin-left:auto; font-family:'Roboto Mono'; font-size:10px; font-weight:700; letter-spacing:.08em; padding:3px 8px; border-radius:999px; }
+  .chip.live { background:rgba(193,39,45,.12); color:var(--ball); }
+  .chip.played { background:rgba(46,125,91,.14); color:var(--good); }
+  .mcard .row2 { display:flex; gap:16px; margin-top:8px; font-family:'Roboto Mono'; font-size:13px; color:var(--ink); flex-wrap:wrap; }
+  .mcard .res { margin-top:8px; font-size:13px; color:var(--muted); }
+  .mcard .venue { font-size:11px; color:var(--muted); margin-top:4px; }
+  .empty { color:var(--muted); font-size:14px; padding:8px 2px; }
+  /* completed scorecard */
+  .sc-hero { text-align:center; background:var(--pitch); color:var(--cream); border-radius:16px; padding:20px; margin-bottom:18px; }
+  .sc-hero .teams { font-family:'Oswald'; font-size:22px; }
+  .sc-hero .venue { color:#cbd5cd; font-size:12px; margin-top:4px; }
+  .sc-hero .result { color:var(--boundary); font-weight:600; margin-top:10px; font-size:15px; }
+  .inn-block { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px; margin-bottom:14px; }
+  .inn-head { display:flex; align-items:baseline; gap:10px; font-family:'Oswald'; font-size:18px; margin-bottom:10px; }
+  .inn-head .sc { margin-left:auto; font-family:'Roboto Mono'; font-weight:700; }
+  .bat-row { display:flex; font-size:13px; padding:4px 0; border-bottom:1px dashed var(--line); }
+  .bat-row .nm { flex:1; } .bat-row .how { color:var(--muted); font-size:11px; flex:1; }
+  .bat-row .fig { font-family:'Roboto Mono'; }
+  .ov-h { font-family:'Oswald'; text-transform:uppercase; letter-spacing:.08em; font-size:12px; color:var(--muted); margin:12px 0 8px; }
+  .ov-row { display:flex; gap:8px; align-items:center; padding:5px 0; border-bottom:1px dashed var(--line); }
+  .ov-row .ovn { font-family:'Roboto Mono'; font-size:12px; color:var(--muted); min-width:34px; }
+  .ov-row .balls { display:flex; gap:5px; flex-wrap:wrap; flex:1; }
+  .ov-row .ovr { font-family:'Roboto Mono'; font-size:12px; color:var(--ink); min-width:44px; text-align:right; }
+</style>
+</head>
+<body>
+<div class="live-shell">
+  <div class="topbar">
+    <div class="brand" style="margin:0"><div class="seam"></div><b>Cricket</b><span>public feed</span></div>
+    <a class="btn sm back" id="backBtn" href="live.html" style="display:none">← All matches</a>
+  </div>
+
+  <!-- LIST VIEW -->
+  <div id="listView" style="display:none">
+    <div class="feed-h"><span class="dot"></span> Live now</div>
+    <div id="liveList"></div>
+    <div class="feed-h">Recent results</div>
+    <div id="playedList"></div>
+  </div>
+
+  <!-- LIVE SCOREBOARD VIEW -->
+  <div id="liveView" style="display:none">
+    <div class="scoreboard">
+      <div class="sb-top">
+        <div><div class="sb-team" id="team">—</div><div class="sb-inn" id="inn"></div></div>
+        <div class="status-chip" id="status"></div>
+      </div>
+      <div class="sb-score"><span id="runs">0</span><small>/<span id="wkts">0</span></small></div>
+      <div class="sb-meta">
+        <span>Overs <b class="mono" id="ov">0.0</b></span>
+        <span>CRR <b class="mono" id="crr">0.00</b></span>
+      </div>
+      <div class="sb-target" id="target" style="display:none"></div>
+    </div>
+    <div class="mini" style="margin-bottom:12px">
+      <div class="cap">At the crease</div>
+      <div class="who"><span class="nm" id="stk">—</span><span class="fig mono" id="stkf"></span></div>
+      <div class="who" style="margin-top:6px"><span class="nm" id="non">—</span><span class="fig mono" id="nonf"></span></div>
+    </div>
+    <div class="mini">
+      <div class="cap">Bowler</div>
+      <div class="who"><span class="nm" id="bwl">—</span><span class="fig mono" id="bwlf"></span></div>
+      <div class="pips" id="pips"></div>
+    </div>
+    <p class="note" style="color:#cbd5cd;text-align:center;margin-top:18px" id="result"></p>
+  </div>
+
+  <!-- COMPLETED SCORECARD VIEW -->
+  <div id="cardView" style="display:none"></div>
+</div>
+
+<script>
+const q = new URLSearchParams(location.search);
+const matchId = q.get('id');
+
+// ---- ball label + helpers (mirror of the server engine) ----
+function lbl(b) {
+  if (b.extra === 'wide') return b.runs ? (b.runs + 1) + 'wd' : 'wd';
+  if (b.extra === 'noball') return b.runs ? b.runs + 'nb' : 'nb';
+  if (b.wicket) return 'W';
+  if (b.extra === 'bye') return b.runs + 'b';
+  if (b.extra === 'legbye') return b.runs + 'lb';
+  return String(b.runs);
+}
+function isLegal(b) { return !(b.extra === 'wide' || b.extra === 'noball'); }
+function pipClass(l) {
+  if (l === 'W') return 'pip wkt';
+  if (l === '4') return 'pip four';
+  if (l === '6') return 'pip six';
+  if (/wd|nb|b$/.test(l)) return 'pip extra';
+  if (l === '0') return 'pip dot';
+  return 'pip';
+}
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c])); }
+
+// =====================================================================
+// LIST VIEW — live + past matches
+// =====================================================================
+function matchCardHTML(m) {
+  const chip = m.category === 'live' ? '<span class="chip live">● LIVE</span>' : '<span class="chip played">RESULT</span>';
+  const scores = (m.innings || []).map((i) => `${esc(i.battingTeam)} ${i.runs}/${i.wickets} (${i.overs})`).join('&nbsp;&nbsp;•&nbsp;&nbsp;');
+  const res = m.result ? `<div class="res">🏆 ${esc(m.result)}</div>` : (m.category === 'live' ? '<div class="res">In progress…</div>' : '');
+  const venue = m.venue ? `<div class="venue">${esc(m.venue)}</div>` : '';
+  return `<a class="mcard" href="live.html?id=${encodeURIComponent(m.id)}">
+    <div class="row1"><span class="teams">${esc(m.teamA)} <small style="opacity:.5">v</small> ${esc(m.teamB)}</span>${chip}</div>
+    ${scores ? `<div class="row2">${scores}</div>` : ''}
+    ${res}${venue}
+  </a>`;
+}
+async function renderList() {
+  document.getElementById('listView').style.display = 'block';
+  try {
+    const data = await fetch('/api/matches').then((r) => r.json());
+    const live = data.live || [], played = data.played || [];
+    document.getElementById('liveList').innerHTML = live.length ? live.map(matchCardHTML).join('') : '<div class="empty">No live matches right now.</div>';
+    document.getElementById('playedList').innerHTML = played.length ? played.map(matchCardHTML).join('') : '<div class="empty">No past matches yet.</div>';
+  } catch (_) {
+    document.getElementById('liveList').innerHTML = '<div class="empty">Could not load matches.</div>';
+  }
+  setTimeout(renderList, 10000); // refresh the feed
+}
+
+// =====================================================================
+// LIVE SCOREBOARD (Server-Sent Events, poll fallback)
+// =====================================================================
+function renderLive(s) {
+  document.getElementById('team').textContent = s.batting || '—';
+  document.getElementById('inn').textContent = s.innings ? (s.innings === 1 ? '1st innings' : '2nd innings') : '';
+  document.getElementById('status').textContent = (s.status || '').replace('_', ' ');
+  document.getElementById('runs').textContent = s.runs ?? 0;
+  document.getElementById('wkts').textContent = s.wickets ?? 0;
+  document.getElementById('ov').textContent = s.oversBowled || '0.0';
+  document.getElementById('crr').textContent = (typeof s.runRate === 'number') ? s.runRate.toFixed(2) : (s.runRate || '0.00');
+  const t = document.getElementById('target');
+  if (s.required) { t.style.display = 'block'; t.innerHTML = `Need <b>${s.required.runs}</b> off <b>${s.required.balls}</b> balls (target ${s.target})`; }
+  else t.style.display = 'none';
+  if (s.striker) { document.getElementById('stk').textContent = s.striker.name + ' *'; document.getElementById('stkf').textContent = s.striker.runs + ' (' + s.striker.balls + ')'; }
+  if (s.nonStriker) { document.getElementById('non').textContent = s.nonStriker.name; document.getElementById('nonf').textContent = s.nonStriker.runs + ' (' + s.nonStriker.balls + ')'; }
+  if (s.bowler) { document.getElementById('bwl').textContent = s.bowler.name; document.getElementById('bwlf').textContent = s.bowler.overs + '-' + s.bowler.runs + '-' + s.bowler.wickets; }
+  const pips = document.getElementById('pips'); pips.innerHTML = '';
+  (s.lastBalls || []).forEach((l) => { const d = document.createElement('div'); d.className = pipClass(l); d.textContent = l; pips.appendChild(d); });
+  document.getElementById('result').textContent = s.result ? '🏆 ' + s.result.text : '';
+  // if the match has finished, swap to the full scorecard
+  if (s.status === 'complete') location.reload();
+}
+function connectLive(id) {
+  document.getElementById('liveView').style.display = 'block';
+  const es = new EventSource('/api/matches/' + id + '/stream');
+  es.onmessage = (e) => { try { renderLive(JSON.parse(e.data)); } catch (_) {} };
+  es.onerror = () => { es.close(); setTimeout(() => pollLive(id), 2000); };
+}
+async function pollLive(id) {
+  try { const r = await fetch('/api/matches/' + id + '/score'); renderLive(await r.json()); } catch (_) {}
+  setTimeout(() => pollLive(id), 3000);
+}
+
+// =====================================================================
+// COMPLETED SCORECARD — all overs + who won
+// =====================================================================
+function inningsHTML(inn) {
+  // batting card
+  const order = inn.battingOrder || Object.keys(inn.batters || {});
+  const bats = order.map((id) => inn.batters[id]).filter((b) => b && (b.balls > 0 || b.out));
+  const batRows = bats.map((b) => `<div class="bat-row"><span class="nm">${esc(b.name)}${b.out ? '' : ' *'}</span><span class="how">${b.out ? esc(b.howOut || 'out') : 'not out'}</span><span class="fig">${b.runs} (${b.balls})${b.fours ? ' ' + b.fours + '×4' : ''}${b.sixes ? ' ' + b.sixes + '×6' : ''}</span></div>`).join('');
+
+  // over-by-over from the timeline
+  const overs = [];
+  let cur = null, legal = 0;
+  (inn.timeline || []).forEach((b) => {
+    if (!cur) { cur = { n: overs.length + 1, balls: [], runs: 0 }; }
+    cur.balls.push(lbl(b));
+    cur.runs += (b.teamRuns || 0);
+    if (isLegal(b)) { legal += 1; if (legal % 6 === 0) { overs.push(cur); cur = null; } }
+  });
+  if (cur) overs.push(cur);
+  const overRows = overs.map((o) => `<div class="ov-row"><span class="ovn">Ov ${o.n}</span><span class="balls">${o.balls.map((l) => `<span class="${pipClass(l)}">${l}</span>`).join('')}</span><span class="ovr">${o.runs} run${o.runs === 1 ? '' : 's'}</span></div>`).join('');
+
+  const extras = inn.extras ? `<div class="bat-row"><span class="nm" style="color:var(--muted)">Extras</span><span class="how"></span><span class="fig">${inn.extras.total} (wd ${inn.extras.wides}, nb ${inn.extras.noballs}, b ${inn.extras.byes}, lb ${inn.extras.legbyes})</span></div>` : '';
+
+  return `<div class="inn-block">
+    <div class="inn-head">${esc(inn.battingTeamName)}<span class="sc">${inn.runs}/${inn.wickets} <small style="color:var(--muted)">(${inn.oversText || ''})</small></span></div>
+    ${batRows}${extras}
+    <div class="ov-h">Over by over</div>
+    ${overRows || '<div class="empty">No balls bowled.</div>'}
+  </div>`;
+}
+async function renderCompleted(id) {
+  const view = document.getElementById('cardView');
+  view.style.display = 'block';
+  let m;
+  try { m = await fetch('/api/matches/' + id).then((r) => r.json()); }
+  catch (_) { view.innerHTML = '<div class="empty">Could not load match.</div>'; return; }
+  (m.innings || []).forEach((inn) => { inn.oversText = (Math.floor(inn.legalBalls / 6)) + '.' + (inn.legalBalls % 6); });
+  const result = m.result ? m.result.text : '';
+  view.innerHTML = `
+    <div class="sc-hero">
+      <div class="teams">${esc(m.teams.A.name)} <small style="opacity:.6">v</small> ${esc(m.teams.B.name)}</div>
+      ${m.venue ? `<div class="venue">${esc(m.venue)} · ${m.overs} overs</div>` : `<div class="venue">${m.overs} overs a side</div>`}
+      ${result ? `<div class="result">🏆 ${esc(result)}</div>` : ''}
+    </div>
+    ${(m.innings || []).map(inningsHTML).join('')}
+  `;
+}
+
+// =====================================================================
+// Route
+// =====================================================================
+async function boot() {
+  if (!matchId) { renderList(); return; }
+  document.getElementById('backBtn').style.display = 'inline-block';
+  // decide live vs completed
+  try {
+    const meta = await fetch('/api/matches/' + matchId + '/score').then((r) => r.json());
+    if (meta && meta.status === 'complete') renderCompleted(matchId);
+    else connectLive(matchId);
+  } catch (_) {
+    connectLive(matchId);
+  }
+}
+boot();
+</script>
+</body>
+</html>

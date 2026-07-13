@@ -1,0 +1,66 @@
+{
+  "id": "southafrica",
+  "name": "South Africa",
+  "players": [
+    {
+      "id": "southafrica1",
+      "name": "Q. de Kock"
+    },
+    {
+      "id": "southafrica2",
+      "name": "T. Bavuma"
+    },
+    {
+      "id": "southafrica3",
+      "name": "R. van der Dussen"
+    },
+    {
+      "id": "southafrica4",
+      "name": "A. Markram"
+    },
+    {
+      "id": "southafrica5",
+      "name": "H. Klaasen"
+    },
+    {
+      "id": "southafrica6",
+      "name": "D. Miller"
+    },
+    {
+      "id": "southafrica7",
+      "name": "M. Jansen"
+    },
+    {
+      "id": "southafrica8",
+      "name": "K. Rabada"
+    },
+    {
+      "id": "southafrica9",
+      "name": "L. Ngidi"
+    },
+    {
+      "id": "southafrica10",
+      "name": "T. Shamsi"
+    },
+    {
+      "id": "southafrica11",
+      "name": "K. Maharaj"
+    },
+    {
+      "id": "southafrica12",
+      "name": "R. Hendricks"
+    },
+    {
+      "id": "southafrica13",
+      "name": "A. Nortje"
+    },
+    {
+      "id": "southafrica14",
+      "name": "G. Coetzee"
+    },
+    {
+      "id": "southafrica15",
+      "name": "T. Stubbs"
+    }
+  ]
+}

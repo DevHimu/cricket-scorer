@@ -1,0 +1,42 @@
+[
+  {
+    "id": "chennaisuperkings",
+    "name": "Chennai Super Kings"
+  },
+  {
+    "id": "mumbaiindians",
+    "name": "Mumbai Indians"
+  },
+  {
+    "id": "royalchallengersbengaluru",
+    "name": "Royal Challengers Bengaluru"
+  },
+  {
+    "id": "kolkataknightriders",
+    "name": "Kolkata Knight Riders"
+  },
+  {
+    "id": "sunrisershyderabad",
+    "name": "Sunrisers Hyderabad"
+  },
+  {
+    "id": "delhicapitals",
+    "name": "Delhi Capitals"
+  },
+  {
+    "id": "rajasthanroyals",
+    "name": "Rajasthan Royals"
+  },
+  {
+    "id": "punjabkings",
+    "name": "Punjab Kings"
+  },
+  {
+    "id": "lucknowsupergiants",
+    "name": "Lucknow Super Giants"
+  },
+  {
+    "id": "gujarattitans",
+    "name": "Gujarat Titans"
+  }
+]

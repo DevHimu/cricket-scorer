@@ -1,0 +1,106 @@
+{
+  "id": "lucknowsupergiants",
+  "name": "Lucknow Super Giants",
+  "players": [
+    {
+      "id": "lucknowsupergiants1",
+      "name": "Rishabh Pant"
+    },
+    {
+      "id": "lucknowsupergiants2",
+      "name": "Nicholas Pooran"
+    },
+    {
+      "id": "lucknowsupergiants3",
+      "name": "Mayank Yadav"
+    },
+    {
+      "id": "lucknowsupergiants4",
+      "name": "Mohammed Shami"
+    },
+    {
+      "id": "lucknowsupergiants5",
+      "name": "Avesh Khan"
+    },
+    {
+      "id": "lucknowsupergiants6",
+      "name": "Josh Inglis"
+    },
+    {
+      "id": "lucknowsupergiants7",
+      "name": "Mitchell Marsh"
+    },
+    {
+      "id": "lucknowsupergiants8",
+      "name": "Aiden Markram"
+    },
+    {
+      "id": "lucknowsupergiants9",
+      "name": "Wanindu Hasaranga"
+    },
+    {
+      "id": "lucknowsupergiants10",
+      "name": "Abdul Samad"
+    },
+    {
+      "id": "lucknowsupergiants11",
+      "name": "Ayush Badoni"
+    },
+    {
+      "id": "lucknowsupergiants12",
+      "name": "Mohsin Khan"
+    },
+    {
+      "id": "lucknowsupergiants13",
+      "name": "Shahbaz Ahmed"
+    },
+    {
+      "id": "lucknowsupergiants14",
+      "name": "Akshat Raghuwanshi"
+    },
+    {
+      "id": "lucknowsupergiants15",
+      "name": "Mukul Choudhary"
+    },
+    {
+      "id": "lucknowsupergiants16",
+      "name": "Anrich Nortje"
+    },
+    {
+      "id": "lucknowsupergiants17",
+      "name": "Naman Tiwari"
+    },
+    {
+      "id": "lucknowsupergiants18",
+      "name": "M Siddharth"
+    },
+    {
+      "id": "lucknowsupergiants19",
+      "name": "Matthew Breetzke"
+    },
+    {
+      "id": "lucknowsupergiants20",
+      "name": "Prince Yadav"
+    },
+    {
+      "id": "lucknowsupergiants21",
+      "name": "Arshin Kulkarni"
+    },
+    {
+      "id": "lucknowsupergiants22",
+      "name": "Digvesh Singh"
+    },
+    {
+      "id": "lucknowsupergiants23",
+      "name": "Arjun Tendulkar"
+    },
+    {
+      "id": "lucknowsupergiants24",
+      "name": "Himmat Singh"
+    },
+    {
+      "id": "lucknowsupergiants25",
+      "name": "Akash Singh"
+    }
+  ]
+}
