@@ -9,7 +9,8 @@ const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) 
 const state = {
   token: null,
   teams: [],
-  config: { overs: 6, venue: null, teamA: null, teamB: null }, // teamX = {id,name,players:[XI]}
+  leagues: [],
+  config: { overs: 6, venue: null, league: null, teamA: null, teamB: null }, // teamX = {id,name,players:[XI]}
   xiSide: 'A',        // which team we're picking
   squad: null,        // full squad during XI pick
   selected: new Set(),
@@ -58,8 +59,7 @@ $('loginBtn').onclick = async () => {
     });
     state.token = token;
     persistSession();
-    await loadTeams();
-    showScreen('setup');
+    await showHome();
   } catch (e) { setErr('loginErr', e.message); }
 };
 $('loginPass').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('loginBtn').click(); });
@@ -75,7 +75,6 @@ async function restoreSession() {
     if (!s.valid) throw new Error('expired');
   } catch (_) { state.token = null; localStorage.removeItem(LS_TOKEN); localStorage.removeItem(LS_MATCH); updateAuthUI(); return; }
   updateAuthUI();
-  try { await loadTeams(); } catch (_) {}
   const mid = localStorage.getItem(LS_MATCH);
   if (mid) {
     try {
@@ -87,21 +86,157 @@ async function restoreSession() {
     } catch (_) {}
     clearMatchSession();
   }
-  showScreen('setup');
+  await showHome();
 }
 
 function resumeMatch(m) {
   if (m.status === 'live') { showScreen('scorer'); renderScorer(); if (m.needNewBatter) showBatterModal(); else if (m.needNewBowler) showBowlerModal(); return; }
   if (m.status === 'innings_break') { showScreen('scorer'); renderScorer(); showInningsBreak(); return; }
-  showScreen('setup'); // toss/setup mid-flow: start clean
+  showHome(); // toss/setup mid-flow: start clean from the hub
 }
 
-async function loadTeams() {
-  state.teams = await api('/api/teams');
+async function loadTeams(league) {
+  const all = await api('/api/teams');
+  state.teams = league ? all.filter((t) => (t.league || 'International') === league) : all;
   const opts = state.teams.map((t) => `<option value="${t.id}">${t.name}</option>`).join('');
   $('teamA').innerHTML = opts;
   $('teamB').innerHTML = opts;
   if (state.teams[1]) $('teamB').value = state.teams[1].id;
+  return all;
+}
+
+// ---------------------------------------------------------------------------
+// HOME HUB + MATCHES HISTORY
+// ---------------------------------------------------------------------------
+async function showHome() {
+  showScreen('home');
+  renderHistory();
+}
+
+function histRow(m, isLive) {
+  const row = el('div', 'hist-row');
+  const chip = el('span', 'chip2 ' + (isLive ? 'live' : 'played'), isLive ? '● LIVE' : 'PLAYED');
+  const title = el('span', 't', `${m.teamA} v ${m.teamB}`);
+  const sp = el('div', 'sp');
+
+  if (isLive) {
+    const resume = el('button', 'btn sm gold', 'Resume');
+    resume.onclick = async () => {
+      try {
+        const full = await api('/api/matches/' + m.id);
+        state.matchId = full.id; state.match = full;
+        persistSession();
+        resumeMatch(full);
+      } catch (e) { setErr('histErr', e.message); }
+    };
+    sp.appendChild(resume);
+  } else {
+    const view = el('a', 'btn sm ghost', 'View');
+    view.href = 'live.html?id=' + m.id; view.target = '_blank';
+    sp.appendChild(view);
+  }
+  const del = el('button', 'btn sm danger', 'Delete');
+  del.onclick = async () => {
+    if (!confirm(`Delete ${m.teamA} v ${m.teamB}? This can't be undone.`)) return;
+    try { await api('/api/matches/' + m.id + '/delete', 'POST', {}); renderHistory(); }
+    catch (e) { setErr('histErr', e.message); }
+  };
+  sp.appendChild(del);
+
+  const scores = (m.innings || []).map((i) => `${i.battingTeam} ${i.runs}/${i.wickets} (${i.overs})`).join('  ·  ');
+  const bits = [m.league, m.venue, scores, m.result].filter(Boolean).join('  ·  ');
+  const meta = el('span', 'meta', bits || (isLive ? 'In progress…' : ''));
+
+  row.appendChild(chip); row.appendChild(title); row.appendChild(sp); row.appendChild(meta);
+  return row;
+}
+
+async function renderHistory() {
+  setErr('histErr', '');
+  try {
+    const data = await api('/api/matches');
+    const liveBox = $('histLive'), playedBox = $('histPlayed');
+    liveBox.innerHTML = ''; playedBox.innerHTML = '';
+    liveBox.appendChild(el('div', 'hist-h', 'Live'));
+    if (data.live.length) data.live.forEach((m) => liveBox.appendChild(histRow(m, true)));
+    else liveBox.appendChild(el('p', 'note', 'No live matches.'));
+    playedBox.appendChild(el('div', 'hist-h', 'Completed'));
+    if (data.played.length) data.played.forEach((m) => playedBox.appendChild(histRow(m, false)));
+    else playedBox.appendChild(el('p', 'note', 'No completed matches yet.'));
+  } catch (e) { setErr('histErr', e.message); }
+}
+
+// ---------------------------------------------------------------------------
+// LEAGUE SELECT (before team select)
+// ---------------------------------------------------------------------------
+async function openLeagueSelect() {
+  setErr('leagueErr', '');
+  showScreen('league');
+  try {
+    const [{ leagues }, teams] = await Promise.all([api('/api/leagues'), api('/api/teams')]);
+    state.leagues = leagues;
+    const grid = $('leagueGrid'); grid.innerHTML = '';
+    leagues.forEach((lg) => {
+      const count = teams.filter((t) => (t.league || 'International') === lg).length;
+      const card = el('div', 'league-card');
+      card.innerHTML = `${lg}<small>${count} team${count === 1 ? '' : 's'}</small>`;
+      card.onclick = async () => {
+        if (count < 2) { setErr('leagueErr', `"${lg}" needs at least 2 teams — add them from the home page first.`); return; }
+        state.config.league = lg;
+        $('setupLeague').textContent = lg + ' — new match';
+        await loadTeams(lg);
+        showScreen('setup');
+      };
+      grid.appendChild(card);
+    });
+  } catch (e) { setErr('leagueErr', e.message); }
+}
+
+// ---------------------------------------------------------------------------
+// ADD TEAM & SQUAD
+// ---------------------------------------------------------------------------
+async function openAddTeam() {
+  setErr('atErr', ''); $('atOk').style.display = 'none';
+  showScreen('addteam');
+  try {
+    const { leagues } = await api('/api/leagues');
+    state.leagues = leagues;
+    $('atLeague').innerHTML = leagues.map((l) => `<option>${l}</option>`).join('');
+  } catch (e) { setErr('atErr', e.message); }
+}
+
+function atPlayerNames() {
+  return $('atPlayers').value.split('\n').map((s) => s.trim()).filter(Boolean);
+}
+
+// ---------------------------------------------------------------------------
+// MANAGE LEAGUES
+// ---------------------------------------------------------------------------
+async function openLeaguesModal() {
+  setErr('leaguesErr', '');
+  await renderLeaguesList();
+  openModal('modalLeagues');
+}
+async function renderLeaguesList() {
+  try {
+    const [{ leagues }, teams] = await Promise.all([api('/api/leagues'), api('/api/teams')]);
+    state.leagues = leagues;
+    const box = $('leagueList'); box.innerHTML = '';
+    leagues.forEach((lg) => {
+      const count = teams.filter((t) => (t.league || 'International') === lg).length;
+      const row = el('div', 'pick');
+      row.style.cursor = 'default';
+      row.innerHTML = `<span>${lg} <small style="color:var(--muted)">· ${count} team${count === 1 ? '' : 's'}</small></span>`;
+      const del = el('button', 'btn sm danger', 'Delete');
+      del.onclick = async () => {
+        setErr('leaguesErr', '');
+        try { await api('/api/leagues/delete', 'POST', { name: lg }); renderLeaguesList(); }
+        catch (e) { setErr('leaguesErr', e.message); }
+      };
+      row.appendChild(del);
+      box.appendChild(row);
+    });
+  } catch (e) { setErr('leaguesErr', e.message); }
 }
 
 // ---------------------------------------------------------------------------
@@ -384,9 +519,13 @@ const API_ENDPOINTS = [
     ['POST', '/api/login', 'Get a bearer token. Body: <b>{ username, password }</b>', false],
     ['GET', '/api/session', 'Check if the current token is still valid.', false],
   ]],
-  ['Teams (public)', [
-    ['GET', '/api/teams', 'List all teams.', true],
+  ['Teams & leagues', [
+    ['GET', '/api/teams', 'List all teams (includes <b>league</b>).', true],
     ['GET', '/api/teams/:id', 'Squad for one team.', true],
+    ['POST', '/api/teams/create', 'Add a team. Body: <b>{ name, league, players[] }</b>', false],
+    ['GET', '/api/leagues', 'List leagues.', true],
+    ['POST', '/api/leagues/create', 'Add a league. Body: <b>{ name }</b>', false],
+    ['POST', '/api/leagues/delete', 'Remove an empty league. Body: <b>{ name }</b>', false],
   ]],
   ['Scoring (needs Bearer token)', [
     ['POST', '/api/matches/create', 'Create a match. Body: <b>{ overs, venue?, teamA, teamB }</b>', false],
@@ -397,6 +536,7 @@ const API_ENDPOINTS = [
     ['POST', '/api/matches/:id/bowler', 'Body: <b>{ bowlerId }</b>', false],
     ['POST', '/api/matches/:id/second-innings', 'Open second-innings setup.', false],
     ['POST', '/api/matches/:id/undo', 'Undo the last ball.', false],
+    ['POST', '/api/matches/:id/delete', 'Delete a match (live or completed).', false],
   ]],
   ['Live data (public — consume these)', [
     ['GET', '/api/matches', 'List matches → <b>{ live, played, matches }</b>. Filter with <b>?state=live|played</b>.', true],
@@ -543,4 +683,37 @@ function showResult() {
 // Boot: wire logout + restore any saved session
 // ---------------------------------------------------------------------------
 if ($('logoutBtn')) $('logoutBtn').onclick = logout;
+$('homeAddTeam').onclick = openAddTeam;
+$('homeStart').onclick = openLeagueSelect;
+$('homeLeagues').onclick = openLeaguesModal;
+$('histRefresh').onclick = renderHistory;
+$('leagueBack').onclick = () => showHome();
+$('addTeamBack').onclick = () => showHome();
+$('setupBack').onclick = openLeagueSelect;
+$('leaguesClose').onclick = () => closeModal('modalLeagues');
+$('modalLeagues').addEventListener('click', (e) => { if (e.target === $('modalLeagues')) closeModal('modalLeagues'); });
+$('addLeagueBtn').onclick = async () => {
+  setErr('leaguesErr', '');
+  const name = $('newLeagueName').value.trim();
+  if (!name) return;
+  try { await api('/api/leagues/create', 'POST', { name }); $('newLeagueName').value = ''; renderLeaguesList(); }
+  catch (e) { setErr('leaguesErr', e.message); }
+};
+$('atPlayers').addEventListener('input', () => {
+  const n = atPlayerNames().length;
+  $('atCount').textContent = n + ' player' + (n === 1 ? '' : 's') + (n < 11 ? ' — need at least 11' : ' ✓');
+});
+$('atSave').onclick = async () => {
+  setErr('atErr', ''); $('atOk').style.display = 'none';
+  try {
+    const team = await api('/api/teams/create', 'POST', {
+      name: $('atName').value.trim(),
+      league: $('atLeague').value,
+      players: atPlayerNames(),
+    });
+    $('atOk').textContent = `Saved "${team.name}" (${team.players.length} players) to ${team.league}.`;
+    $('atOk').style.display = 'block';
+    $('atName').value = ''; $('atPlayers').value = ''; $('atCount').textContent = '0 players';
+  } catch (e) { setErr('atErr', e.message); }
+};
 restoreSession();

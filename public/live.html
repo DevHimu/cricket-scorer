@@ -122,7 +122,7 @@ function matchCardHTML(m) {
   const chip = m.category === 'live' ? '<span class="chip live">● LIVE</span>' : '<span class="chip played">RESULT</span>';
   const scores = (m.innings || []).map((i) => `${esc(i.battingTeam)} ${i.runs}/${i.wickets} (${i.overs})`).join('&nbsp;&nbsp;•&nbsp;&nbsp;');
   const res = m.result ? `<div class="res">🏆 ${esc(m.result)}</div>` : (m.category === 'live' ? '<div class="res">In progress…</div>' : '');
-  const venue = m.venue ? `<div class="venue">${esc(m.venue)}</div>` : '';
+  const venue = (m.league || m.venue) ? `<div class="venue">${esc([m.league, m.venue].filter(Boolean).join(' · '))}</div>` : '';
   return `<a class="mcard" href="live.html?id=${encodeURIComponent(m.id)}">
     <div class="row1"><span class="teams">${esc(m.teamA)} <small style="opacity:.5">v</small> ${esc(m.teamB)}</span>${chip}</div>
     ${scores ? `<div class="row2">${scores}</div>` : ''}
@@ -217,7 +217,7 @@ async function renderCompleted(id) {
   view.innerHTML = `
     <div class="sc-hero">
       <div class="teams">${esc(m.teams.A.name)} <small style="opacity:.6">v</small> ${esc(m.teams.B.name)}</div>
-      ${m.venue ? `<div class="venue">${esc(m.venue)} · ${m.overs} overs</div>` : `<div class="venue">${m.overs} overs a side</div>`}
+      <div class="venue">${esc([m.league, m.venue].filter(Boolean).join(' · ') || '')}${(m.league||m.venue)?' · ':''}${m.overs} overs a side</div>
       ${result ? `<div class="result">🏆 ${esc(result)}</div>` : ''}
     </div>
     ${(m.innings || []).map(inningsHTML).join('')}

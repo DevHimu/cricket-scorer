@@ -271,3 +271,50 @@ input:focus, select:focus { outline: none; border-color: var(--pitch); box-shado
   .api-item { grid-template-columns: auto 1fr; }
   .api-copy { grid-column: 2; justify-self: start; }
 }
+
+/* ---- Home hub, league picker, history ---- */
+.home-cards { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:6px; }
+.home-card {
+  border:1px solid var(--line); border-radius:14px; padding:18px 16px; cursor:pointer;
+  display:flex; flex-direction:column; gap:4px; background:var(--card);
+  transition:border-color .15s, transform .1s;
+}
+.home-card:hover { border-color:var(--boundary); transform:translateY(-2px); }
+.home-card b { font-family:'Oswald'; font-size:17px; }
+.home-card span { color:var(--muted); font-size:12px; }
+.home-card .hc-ic { font-size:22px; }
+.home-card.gold { background:var(--pitch); border-color:var(--pitch); }
+.home-card.gold b, .home-card.gold .hc-ic { color:var(--cream); }
+.home-card.gold span { color:#b9c8bf; }
+.home-card.gold:hover { border-color:var(--boundary); }
+@media (max-width:480px){ .home-cards{ grid-template-columns:1fr; } }
+
+.league-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px; }
+.league-card {
+  border:1px solid var(--line); border-radius:12px; padding:16px 14px; cursor:pointer;
+  font-family:'Oswald'; font-size:16px; display:flex; align-items:center; justify-content:space-between;
+  background:var(--card); transition:border-color .15s, transform .1s;
+}
+.league-card:hover { border-color:var(--boundary); transform:translateY(-1px); }
+.league-card small { font-family:'Inter'; color:var(--muted); font-size:11px; }
+@media (max-width:480px){ .league-grid{ grid-template-columns:1fr; } }
+
+.hist-h { font-family:'Oswald'; text-transform:uppercase; letter-spacing:.1em; font-size:12px; color:var(--muted); margin:14px 0 8px; }
+.hist-row {
+  border:1px solid var(--line); border-radius:12px; padding:10px 12px; margin-bottom:8px;
+  display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+}
+.hist-row .t { font-weight:600; font-size:14px; }
+.hist-row .meta { color:var(--muted); font-size:12px; flex-basis:100%; }
+.hist-row .chip2 { font-family:'Roboto Mono'; font-size:10px; font-weight:700; padding:2px 8px; border-radius:999px; }
+.chip2.live { background:rgba(193,39,45,.12); color:var(--ball); }
+.chip2.played { background:rgba(46,125,91,.14); color:var(--good); }
+.hist-row .sp { margin-left:auto; display:flex; gap:6px; }
+.btn.sm { padding:7px 12px; font-size:12px; width:auto; }
+.btn.danger { background:#fff; color:var(--ball); border:1px solid var(--ball); }
+.btn.danger:hover { background:var(--ball); color:#fff; }
+.fld textarea {
+  width:100%; border:1px solid var(--line); border-radius:10px; padding:10px 12px;
+  font:inherit; font-size:14px; resize:vertical; background:#fff; color:var(--ink);
+}
+.note.ok { color: var(--good); }

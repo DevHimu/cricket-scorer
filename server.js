@@ -153,14 +153,86 @@ app.get('/api/session', wrap((req, res) => {
 // TEAMS (public read)
 // =========================================================================
 app.get('/api/teams', wrap((req, res) => {
-  const list = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'teams.json'), 'utf8'));
-  res.json(list);
+  res.json(readTeamsList());
 }));
 
 app.get('/api/teams/:id', wrap((req, res) => {
   const file = path.join(TEAMS_DIR, req.params.id + '.json');
   if (!fs.existsSync(file)) return res.status(404).json({ error: 'Team not found' });
-  res.json(JSON.parse(fs.readFileSync(file, 'utf8')));
+  const team = JSON.parse(fs.readFileSync(file, 'utf8'));
+  if (!team.league) team.league = 'International';
+  res.json(team);
+}));
+
+// Teams list with a guaranteed league field (older entries default to International)
+function readTeamsList() {
+  const list = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'teams.json'), 'utf8'));
+  return list.map((t) => ({ ...t, league: t.league || 'International' }));
+}
+
+// =========================================================================
+// LEAGUES (config, manageable from the website) — additive endpoints
+// =========================================================================
+const LEAGUES_FILE = path.join(DATA_DIR, 'leagues.json');
+const DEFAULT_LEAGUES = ['International', 'IPL', 'Club Cricket', 'Gully Cricket'];
+function readLeagues() {
+  try {
+    const l = JSON.parse(fs.readFileSync(LEAGUES_FILE, 'utf8'));
+    return Array.isArray(l) && l.length ? l : DEFAULT_LEAGUES.slice();
+  } catch (_) { return DEFAULT_LEAGUES.slice(); }
+}
+function writeLeagues(list) { fs.writeFileSync(LEAGUES_FILE, JSON.stringify(list, null, 2)); }
+
+app.get('/api/leagues', wrap((req, res) => {
+  res.json({ leagues: readLeagues() });
+}));
+
+app.post('/api/leagues/create', requireAuth, wrap((req, res) => {
+  const name = String((req.body || {}).name || '').trim();
+  if (!name) throw new Error('League name is required');
+  const leagues = readLeagues();
+  if (leagues.some((l) => l.toLowerCase() === name.toLowerCase())) throw new Error('League already exists');
+  leagues.push(name);
+  writeLeagues(leagues);
+  res.status(201).json({ leagues });
+}));
+
+app.post('/api/leagues/delete', requireAuth, wrap((req, res) => {
+  const name = String((req.body || {}).name || '').trim();
+  const leagues = readLeagues();
+  if (!leagues.includes(name)) throw new Error('League not found');
+  if (readTeamsList().some((t) => t.league === name)) throw new Error('League has teams in it — delete or move those teams first');
+  writeLeagues(leagues.filter((l) => l !== name));
+  res.json({ leagues: readLeagues() });
+}));
+
+// =========================================================================
+// TEAM CREATION (from the website) — additive endpoint
+// =========================================================================
+// Body: { name, league, players: ["Player One", "Player Two", ...] } (min 11)
+app.post('/api/teams/create', requireAuth, wrap((req, res) => {
+  const { name, league, players } = req.body || {};
+  const teamName = String(name || '').trim();
+  const leagueName = String(league || '').trim();
+  if (!teamName) throw new Error('Team name is required');
+  if (!leagueName) throw new Error('League is required');
+  if (!readLeagues().includes(leagueName)) throw new Error('Unknown league — add it in Manage leagues first');
+  const names = (Array.isArray(players) ? players : []).map((p) => String(p || '').trim()).filter(Boolean);
+  if (names.length < E.XI_SIZE) throw new Error(`A squad needs at least ${E.XI_SIZE} players (got ${names.length})`);
+
+  const list = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'teams.json'), 'utf8'));
+  let base = teamName.toLowerCase().replace(/[^a-z0-9]+/g, '') || 'team';
+  let id = base, n = 2;
+  while (list.some((t) => t.id === id) || fs.existsSync(path.join(TEAMS_DIR, id + '.json'))) id = base + (n++);
+
+  const team = {
+    id, name: teamName, league: leagueName,
+    players: names.map((p, i) => ({ id: id + (i + 1), name: p })),
+  };
+  fs.writeFileSync(path.join(TEAMS_DIR, id + '.json'), JSON.stringify(team, null, 2));
+  list.push({ id, name: teamName, league: leagueName });
+  fs.writeFileSync(path.join(DATA_DIR, 'teams.json'), JSON.stringify(list, null, 2));
+  res.status(201).json(team);
 }));
 
 // =========================================================================
@@ -233,6 +305,16 @@ app.post('/api/matches/:id/undo', requireAuth, wrap((req, res) => {
   E.undo(m);
   saveMatch(m);
   res.json(m);
+}));
+
+// Delete a match (live or completed) — additive endpoint
+app.post('/api/matches/:id/delete', requireAuth, wrap((req, res) => {
+  const m = getMatch(req.params.id);
+  matches.delete(m.id);
+  try { fs.unlinkSync(path.join(MATCH_DIR, m.id + '.json')); } catch (_) {}
+  const set = streams.get(m.id);
+  if (set) { for (const r of set) { try { r.end(); } catch (_) {} } streams.delete(m.id); }
+  res.json({ deleted: m.id });
 }));
 
 // =========================================================================

@@ -43,6 +43,7 @@ function createMatch(config) {
     status: 'toss',                 // toss -> live -> innings_break -> live -> complete
     overs: Number(config.overs),
     venue: config.venue ? String(config.venue).trim() : null,
+    league: config.league ? String(config.league).trim() : null,
     teams: { A: config.teamA, B: config.teamB },
     toss: null,                     // { winner:'A'|'B', decision:'bat'|'bowl' }
     battingFirst: null,             // 'A' | 'B'
@@ -399,6 +400,7 @@ function liveScore(match) {
     category: match.status === 'complete' ? 'played' : 'live',
     overs: match.overs,
     venue: match.venue || null,
+    league: match.league || null,
     teams: { A: match.teams.A.name, B: match.teams.B.name },
     battingFirst: match.battingFirst,
     result: match.result,
@@ -442,6 +444,7 @@ function liveScore(match) {
       battingTeam: inn.battingTeamName,
       bowlingTeam: inn.bowlingTeamName,
       venue: match.venue || null,
+      league: match.league || null,
       currentRuns: inn.runs,
       currentWickets: inn.wickets,
       oversCompleted: oversText(inn.legalBalls),
@@ -533,6 +536,7 @@ function matchSummary(match) {
     status: match.status,
     overs: match.overs,
     venue: match.venue || null,
+    league: match.league || null,
     teamA: match.teams.A.name,
     teamB: match.teams.B.name,
     innings: inns,

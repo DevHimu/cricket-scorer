@@ -86,9 +86,15 @@ Tokens are **HMAC-signed and stateless**, so they keep working after the server 
 
 **`GET /api/session`** → `{ "valid": true, "user": "...", "expiresAt": "<ISO>" }` — check whether a stored token is still valid (send it as `Authorization: Bearer <token>`).
 
-### Teams (public)
-- **`GET /api/teams`** → `[{ id, name }]`
-- **`GET /api/teams/:id`** → `{ id, name, players:[{id,name}] }`
+### Teams & leagues
+Teams belong to a **league** (International, IPL, Club Cricket, Gully Cricket by default — fully manageable from the website or the API). Teams and squads can be added from the website; they're written straight into the `data/` config.
+
+- **`GET /api/teams`** → `[{ id, name, league }]` (public; entries without a league default to `International`)
+- **`GET /api/teams/:id`** → `{ id, name, league, players:[{id,name}] }` (public)
+- **`POST /api/teams/create`** (auth) — `{ "name", "league", "players": ["Player One", ...] }` (min 11 players). Generates ids, writes `data/teams/<id>.json`, and registers it in `data/teams.json`.
+- **`GET /api/leagues`** → `{ leagues: [...] }` (public, from `data/leagues.json`)
+- **`POST /api/leagues/create`** (auth) — `{ "name" }`
+- **`POST /api/leagues/delete`** (auth) — `{ "name" }` (refused while the league still has teams)
 
 ### Match lifecycle (auth required)
 - **`POST /api/matches/create`** — create a match
@@ -100,7 +106,7 @@ Tokens are **HMAC-signed and stateless**, so they keep working after the server 
     "teamB": { "id":"australia", "name":"Australia", "players":[ "...11 total" ] }
   }
   ```
-  `venue` is optional (used as a prediction feature). → full match object (note the `id`).
+  `venue` and `league` are optional (both surface as prediction features). → full match object (note the `id`).
   *(`POST /api/matches` still works as a deprecated alias, but `/create` is the canonical, unambiguous path — GET and POST no longer share `/api/matches`.)*
 - **`POST /api/matches/:id/toss`** — `{ "winner":"A"|"B", "decision":"bat"|"bowl" }`
 - **`POST /api/matches/:id/start-innings`** — `{ "strikerId", "nonStrikerId", "bowlerId" }`
@@ -116,6 +122,7 @@ Tokens are **HMAC-signed and stateless**, so they keep working after the server 
 - **`POST /api/matches/:id/bowler`** — `{ "bowlerId" }` (after an over)
 - **`POST /api/matches/:id/second-innings`** — start 2nd-innings setup at the break
 - **`POST /api/matches/:id/undo`** — undo the last ball
+- **`POST /api/matches/:id/delete`** — delete a match, live or completed (completed matches can't be edited, only viewed or deleted)
 
 ### Reading scores — this is what you consume
 - **`GET /api/matches/:id/score`** → **compact live score** (recommended). Includes a flat **`features`** block built specifically for a prediction model — see "For your prediction app" below.
@@ -130,6 +137,7 @@ Every `/score` response carries a flat `features` object that maps 1:1 to standa
   "battingTeam": "India",
   "bowlingTeam": "Australia",
   "venue": "Eden Gardens, Kolkata",
+  "league": "IPL",
   "currentRuns": 14,
   "currentWickets": 0,
   "oversCompleted": "1.4",
@@ -152,6 +160,7 @@ Mapping to the usual training parameters:
 | Batting Team         | `battingTeam`                                | string (categorical) |
 | Bowling Team         | `bowlingTeam`                                | string (categorical) |
 | Venue                | `venue`                                      | string (categorical, nullable) |
+| League               | `league`                                     | string (categorical, nullable) — e.g. International / IPL / Club Cricket / Gully Cricket; useful for transfer-learning across match types |
 | Current Runs         | `currentRuns`                                | int     |
 | Current Wickets      | `currentWickets`                             | int     |
 | Overs Completed      | `oversCompleted` (display) / `ballsBowled` (numeric) | string `"O.B"` / int |

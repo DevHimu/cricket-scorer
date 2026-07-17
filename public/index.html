@@ -32,11 +32,77 @@
     </div>
   </section>
 
+  <!-- 1b. HOME (after login) -->
+  <section id="screen-home" class="screen">
+    <div class="panel">
+      <p class="eyebrow">Scorer hub</p>
+      <p class="lead">What do you want to do?</p>
+      <div class="home-cards">
+        <div class="home-card" id="homeAddTeam">
+          <div class="hc-ic">➕</div>
+          <b>Add teams</b>
+          <span>Create a team &amp; squad in any league</span>
+        </div>
+        <div class="home-card gold" id="homeStart">
+          <div class="hc-ic">🏏</div>
+          <b>Start scoring</b>
+          <span>Pick a league, teams &amp; play</span>
+        </div>
+      </div>
+      <button class="btn ghost sm" id="homeLeagues" style="margin-top:10px">⚙ Manage leagues</button>
+    </div>
+
+    <div class="panel" style="margin-top:14px">
+      <div class="vs-head" style="margin-bottom:6px">
+        <p class="eyebrow" style="margin:0">Matches history</p>
+        <button class="btn ghost sm" id="histRefresh">↻ Refresh</button>
+      </div>
+      <p class="note" style="margin-top:0">Live matches can be resumed (edited); completed matches are view-only. Any match can be deleted.</p>
+      <div id="histLive"></div>
+      <div id="histPlayed"></div>
+      <div class="error" id="histErr"></div>
+    </div>
+  </section>
+
+  <!-- 1c. SELECT LEAGUE -->
+  <section id="screen-league" class="screen">
+    <div class="panel">
+      <div class="vs-head">
+        <div><p class="eyebrow">New match</p><p class="lead" style="margin:0">Select league</p></div>
+        <button class="btn ghost sm" id="leagueBack">← Home</button>
+      </div>
+      <p class="note">Teams are grouped by league — pick where this match is being played.</p>
+      <div class="league-grid" id="leagueGrid"></div>
+      <div class="error" id="leagueErr"></div>
+    </div>
+  </section>
+
+  <!-- 1d. ADD TEAM -->
+  <section id="screen-addteam" class="screen">
+    <div class="panel">
+      <div class="vs-head">
+        <div><p class="eyebrow">Teams</p><p class="lead" style="margin:0">Add a team &amp; squad</p></div>
+        <button class="btn ghost sm" id="addTeamBack">← Home</button>
+      </div>
+      <label class="fld"><span>League</span><select id="atLeague"></select></label>
+      <label class="fld"><span>Team name</span><input id="atName" placeholder="e.g. Salt Lake Strikers" /></label>
+      <label class="fld"><span>Squad — one player per line (min 11)</span>
+        <textarea id="atPlayers" rows="12" placeholder="Player One&#10;Player Two&#10;Player Three&#10;…"></textarea>
+      </label>
+      <p class="note" id="atCount">0 players</p>
+      <button class="btn" id="atSave">Save team</button>
+      <div class="error" id="atErr"></div>
+      <div class="note ok" id="atOk" style="display:none"></div>
+    </div>
+  </section>
+
   <!-- 2. SETUP -->
   <section id="screen-setup" class="screen">
     <div class="panel">
-      <p class="eyebrow">New match</p>
-      <p class="lead">Teams &amp; overs</p>
+      <div class="vs-head">
+        <div><p class="eyebrow" id="setupLeague">New match</p><p class="lead" style="margin:0">Teams &amp; overs</p></div>
+        <button class="btn ghost sm" id="setupBack">← League</button>
+      </div>
       <label class="fld"><span>Team A</span><select id="teamA"></select></label>
       <label class="fld"><span>Team B</span><select id="teamB"></select></label>
       <label class="fld"><span>Overs per innings</span><input id="overs" type="number" min="1" max="50" value="6" /></label>
@@ -170,6 +236,20 @@
     <p class="sub" id="apiSub">Reads are public (CORS enabled); scoring actions need the bearer token from <code>/api/login</code>.</p>
     <div class="api-base" id="apiBase"></div>
     <div class="api-list" id="apiList"></div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modalLeagues">
+  <div class="modal">
+    <h2>Manage leagues</h2>
+    <p class="sub">Leagues group your teams (e.g. International, IPL, Club Cricket, Gully Cricket). A league with teams in it can't be deleted.</p>
+    <div class="pick-list" id="leagueList"></div>
+    <div class="idbox" style="display:flex;gap:8px;margin-top:12px">
+      <input id="newLeagueName" placeholder="New league name" style="flex:1" />
+      <button class="btn sm" id="addLeagueBtn">Add</button>
+    </div>
+    <div class="error" id="leaguesErr"></div>
+    <button class="btn ghost" id="leaguesClose" style="margin-top:10px">Close</button>
   </div>
 </div>
 
